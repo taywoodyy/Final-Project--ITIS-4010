@@ -1,0 +1,89 @@
+import random
+from datetime import datetime, timedelta
+
+# Placeholder for AI/ML preference analysis (replace with actual ML)
+def analyze_preferences(user_data):
+    """Simulates AI preference analysis. In a real app, this would use ML."""
+    preferences = {
+        "budget": user_data.get("budget", "medium"),
+        "interests": user_data.get("interests", ["sightseeing", "food"]),
+        "travel_style": user_data.get("travel_style", "relaxed"),
+    }
+    return preferences
+
+# Placeholder for review/recommendation analysis (replace with web scraping/API calls)
+def analyze_reviews(location, interests):
+    """Simulates review analysis. In a real app, this would scrape/use APIs."""
+    fake_reviews = {
+        "sightseeing": [
+            {"name": "Historical Landmark", "rating": random.uniform(3.5, 5), "description": "A must-see."},
+            {"name": "Scenic Viewpoint", "rating": random.uniform(3.0, 4.8), "description": "Great for photos."},
+        ],
+        "food": [
+            {"name": "Local Eatery", "rating": random.uniform(4.0, 5), "description": "Authentic cuisine."},
+            {"name": "Trendy Cafe", "rating": random.uniform(3.8, 4.5), "description": "Great coffee and pastries."},
+        ],
+        "hidden_gems": [
+            {"name": "Secret Garden", "rating": random.uniform(4.2, 5), "description": "Peaceful and beautiful."},
+            {"name": "Local Artisan Market", "rating": random.uniform(3.9, 4.7), "description": "Unique handcrafted items."},
+        ],
+    }
+
+    results = {}
+    for interest in interests:
+        if interest in fake_reviews:
+            results[interest] = fake_reviews[interest]
+    results["hidden_gems"] = fake_reviews["hidden_gems"] #always include hidden gems.
+
+    return results
+
+def generate_itinerary(location, preferences, reviews, days):
+    """Generates a personalized itinerary."""
+    itinerary = []
+    current_date = datetime.now()
+
+    for day in range(days):
+        day_itinerary = {"date": (current_date + timedelta(days=day)).strftime("%Y-%m-%d"), "activities": []}
+
+        if "sightseeing" in preferences["interests"] and reviews.get("sightseeing"):
+            sightseeing_options = sorted(reviews["sightseeing"], key=lambda x: x["rating"], reverse=True)[:2]  # Top 2
+            for option in sightseeing_options:
+                day_itinerary["activities"].append(
+                    {"name": option["name"], "type": "sightseeing", "description": option["description"]}
+                )
+
+        if "food" in preferences["interests"] and reviews.get("food"):
+            food_options = sorted(reviews["food"], key=lambda x: x["rating"], reverse=True)[:2] # Top 2
+            for option in food_options:
+                day_itinerary["activities"].append(
+                    {"name": option["name"], "type": "food", "description": option["description"]}
+                )
+
+        if reviews.get("hidden_gems"):
+            hidden_gem = random.choice(reviews["hidden_gems"])
+            day_itinerary["activities"].append(
+                {"name": hidden_gem["name"], "type": "hidden_gem", "description": hidden_gem["description"]}
+            )
+
+        itinerary.append(day_itinerary)
+
+    return itinerary
+
+# Example usage
+user_data = {
+    "budget": "medium",
+    "interests": ["sightseeing", "food", "history"],
+    "travel_style": "adventurous",
+}
+
+location = "Paris"
+days = 3
+
+preferences = analyze_preferences(user_data)
+reviews = analyze_reviews(location, preferences["interests"])
+itinerary = generate_itinerary(location, preferences, reviews, days)
+
+for day in itinerary:
+    print(f"Date: {day['date']}")
+    for activity in day["activities"]:
+        print(f"  - {activity['name']} ({activity['type']}): {activity['description']}")
